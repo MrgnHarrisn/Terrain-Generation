@@ -50,6 +50,18 @@ std::vector<float> interpolate(std::vector<Vector2f> heights, int max_height)
 	return new_heights;
 }
 
+std::vector<Vector2f> generate_caves(Vector2f min, Vector2f max)
+{
+	std::vector<Vector2f> caves;
+	for (int i = 0; i < 10; i++) {
+		Vector2f cave_pos;
+		cave_pos.x = random(min.x, max.x);
+		cave_pos.y = random(min.y, max.y);
+		caves.push_back(cave_pos);
+	}
+	return caves;
+}
+
 // DEFAULT HEIGHT OF MAP IS 256
 // WIDTH CAN BE WHATEVER
 std::vector<float> generate_heights(int map_width, float epsilon)
@@ -66,7 +78,7 @@ std::vector<float> generate_heights(int map_width, float epsilon)
 		heights.push_back(nh);
 	}
 
-	return interpolate(heights, 600);
+	return interpolate(heights, 400);
 
 }
 
@@ -80,6 +92,10 @@ int main()
 
 	Image image;
 
+	/* Kill myself */
+	Vector2f min = { 0.0, 0.0 }; 
+	Vector2f max = { (float)WIDTH, (float)HEIGHT };
+
 	while (window.isOpen())
 	{
 		Event event;
@@ -89,6 +105,8 @@ int main()
 		}
 
 		image.create(WIDTH, HEIGHT, sf::Color::White);
+
+		auto caves = generate_caves(min, max);
 
 		std::vector<float> heights = generate_heights(WIDTH, 0.004);
 		for (int i = 0; i < WIDTH; i++) {
@@ -107,6 +125,20 @@ int main()
 			// Set other pixels above dirt_height
 			for (int j = 799; j > dirt_height + dirt_range; j--) {
 				image.setPixel(i, j, sf::Color(100, 100, 100));
+			}
+
+			for (int i = 0; i < caves.size(); i++) {
+				int x = static_cast<int>(caves[i].x);
+				int y = static_cast<int>(caves[i].y);
+
+				// Draw a circle (cave) at the cave position
+				for (int circleX = x - 5; circleX <= x + 5; circleX++) {
+					for (int circleY = y - 5; circleY <= y + 5; circleY++) {
+						if (circleX >= 0 && circleX < WIDTH && circleY >= 0 && circleY < HEIGHT) {
+							image.setPixel(circleX, circleY, sf::Color::White);
+						}
+					}
+				}
 			}
 		}
 
