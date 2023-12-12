@@ -73,7 +73,7 @@ std::vector<float> generate_heights(int map_width, float epsilon)
 int main()
 {
 
-	int WIDTH = 1920, HEIGHT = 800;
+	int WIDTH = 800, HEIGHT = 800;
 
 	RenderWindow window(VideoMode(WIDTH, HEIGHT), "Perlin Noise");
 
