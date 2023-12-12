@@ -95,17 +95,17 @@ int main()
 			int dirt_height = static_cast<int>(heights[i]);
 
 			// Clip dirt_height to stay within the valid range of the image
-			dirt_height = std::max(0, std::min(dirt_height, HEIGHT - 1));
+			dirt_height = std::max(0, std::min(dirt_height, HEIGHT - 6));
+			int dirt_range = random(3, 5);
 
 			// Set the dirt color pixel at (i, dirt_height)
-			image.setPixel(i, dirt_height, Color(150, 75, 0));
+			for (int j = dirt_height; j <= dirt_height + dirt_range; j++)
+			{
+				image.setPixel(i, j, Color(150, 75, 0));
+			}
 
 			// Set other pixels above dirt_height
-			for (int j = 799; j > dirt_height; j--) {
-				image.setPixel(i, j, sf::Color(100, 100, 100));
-			}
-			for (int j = 799; j > heights[i]; j--)
-			{
+			for (int j = 799; j > dirt_height + dirt_range; j--) {
 				image.setPixel(i, j, sf::Color(100, 100, 100));
 			}
 		}
