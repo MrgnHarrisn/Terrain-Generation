@@ -66,7 +66,7 @@ std::vector<float> generate_heights(int map_width, float epsilon)
 		heights.push_back(nh);
 	}
 
-	return interpolate(heights, 400);
+	return interpolate(heights, 600);
 
 }
 
@@ -92,12 +92,19 @@ int main()
 
 		std::vector<float> heights = generate_heights(WIDTH, 0.004);
 		for (int i = 0; i < WIDTH; i++) {
-			int dirt_height = static_cast<int>(random(3, 5));
-			for (int j = heights[i] + dirt_height; j > heights[i]; j--)
-			{
-				image.setPixel(i, j, Color(150, 75, 0));
+			int dirt_height = static_cast<int>(heights[i]);
+
+			// Clip dirt_height to stay within the valid range of the image
+			dirt_height = std::max(0, std::min(dirt_height, HEIGHT - 1));
+
+			// Set the dirt color pixel at (i, dirt_height)
+			image.setPixel(i, dirt_height, Color(150, 75, 0));
+
+			// Set other pixels above dirt_height
+			for (int j = 799; j > dirt_height; j--) {
+				image.setPixel(i, j, sf::Color(100, 100, 100));
 			}
-			for (int j = 799; j > heights[i] + dirt_height; j--)
+			for (int j = 799; j > heights[i]; j--)
 			{
 				image.setPixel(i, j, sf::Color(100, 100, 100));
 			}
