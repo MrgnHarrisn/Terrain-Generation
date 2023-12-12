@@ -41,7 +41,21 @@ void drawCircle(sf::Image& image, int centerX, int centerY, int radius, sf::Colo
 			err += dx - (radius << 1);
 		}
 	}
+
+	// Flood fill the circle
+	for (int fillY = -radius; fillY <= radius; fillY++) {
+		for (int fillX = -radius; fillX <= radius; fillX++) {
+			if (fillX * fillX + fillY * fillY <= radius * radius) {
+				int pixelX = centerX + fillX;
+				int pixelY = centerY + fillY;
+				if (pixelX >= 0 && pixelX < image.getSize().x && pixelY >= 0 && pixelY < image.getSize().y) {
+					image.setPixel(pixelX, pixelY, color);
+				}
+			}
+		}
+	}
 }
+
 
 
 float clip(float n, float lower, float upper) {
