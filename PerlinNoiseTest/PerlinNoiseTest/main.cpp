@@ -110,10 +110,16 @@ std::vector<Vector2f> generate_caves(Vector2f min, Vector2f max)
 		Vector2f cave_pos;
 		cave_pos.x = random(min.x, max.x);
 		cave_pos.y = random(min.y, max.y);
+		do {
+			cave_pos.x = random(min.x, max.x);
+			cave_pos.y = random(min.y, max.y);
+		} while ((cave_pos.x < 10) || (cave_pos.x > max.x - 10) || (cave_pos.y < 10) || (cave_pos.y > max.y - 10));
 		caves.push_back(cave_pos);
 	}
 	return caves;
 }
+
+
 
 // DEFAULT HEIGHT OF MAP IS 256
 // WIDTH CAN BE WHATEVER
