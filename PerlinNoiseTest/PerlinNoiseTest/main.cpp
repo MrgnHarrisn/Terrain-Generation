@@ -60,8 +60,8 @@ std::vector<float> generate_heights(int map_width, float epsilon)
 	std::vector<Vector2f> heights;
 	heights.push_back(first);
 	for (int i = 1; i < map_width; i++) {
-		float nx = random(clip(heights[i - 1].x - epsilon, 0.0, 1.0), clip(heights[i - 1].x + epsilon, 0.0, 1.0));
-		float ny = random(clip(heights[i - 1].y - epsilon, 0.0, 1.0), clip(heights[i - 1].y + epsilon, 0.0, 1.0));
+		float nx = random(clip(heights[i - 1].x - epsilon, 0.7, 0.8), clip(heights[i - 1].x + epsilon, 0.7, 0.8));
+		float ny = random(clip(heights[i - 1].y - epsilon, 0.7, 0.8), clip(heights[i - 1].y + epsilon, 0.7, 0.8));
 		Vector2f nh(nx, ny);
 		heights.push_back(nh);
 	}
@@ -76,26 +76,9 @@ int main()
 	int WIDTH = 800, HEIGHT = 800;
 
 	RenderWindow window(VideoMode(WIDTH, HEIGHT), "Perlin Noise");
+	window.setFramerateLimit(2);
 
 	Image image;
-	image.create(WIDTH, HEIGHT, sf::Color::White);
-
-	std::vector<float> heights = generate_heights(WIDTH, 0.004);
-	for (int i = 0; i < WIDTH; i++) {
-		for (int j = heights[i]+5; j > heights[i]; j--)
-		{
-			image.setPixel(i, j, Color(150, 75, 0));
-		}
-		for (int j = 799; j > heights[i]+5; j--)
-		{
-			image.setPixel(i, j, sf::Color(100,100,100));
-		}
-	}
-
-	sf::Texture texture;
-	texture.loadFromImage(image);
-
-	sf::Sprite sprite(texture);
 
 	while (window.isOpen())
 	{
@@ -104,6 +87,25 @@ int main()
 		{
 			if (event.type == Event::Closed) window.close();
 		}
+
+		image.create(WIDTH, HEIGHT, sf::Color::White);
+
+		std::vector<float> heights = generate_heights(WIDTH, 0.004);
+		for (int i = 0; i < WIDTH; i++) {
+			int dirt_height = static_cast<int>(random(3, 5));
+			for (int j = heights[i] + dirt_height; j > heights[i]; j--)
+			{
+				image.setPixel(i, j, Color(150, 75, 0));
+			}
+			for (int j = 799; j > heights[i] + dirt_height; j--)
+			{
+				image.setPixel(i, j, sf::Color(100, 100, 100));
+			}
+		}
+
+		sf::Texture texture;
+		texture.loadFromImage(image);
+		sf::Sprite sprite(texture);
 
 		window.clear();
 		window.draw(sprite);
