@@ -82,7 +82,14 @@ int main()
 
 	std::vector<float> heights = generate_heights(WIDTH, 0.004);
 	for (int i = 0; i < WIDTH; i++) {
-		image.setPixel(i, heights[i], sf::Color::Black);
+		for (int j = heights[i]+5; j > heights[i]; j--)
+		{
+			image.setPixel(i, j, Color(150, 75, 0));
+		}
+		for (int j = 799; j > heights[i]+5; j--)
+		{
+			image.setPixel(i, j, sf::Color(100,100,100));
+		}
 	}
 
 	sf::Texture texture;
