@@ -5,6 +5,45 @@
 
 using namespace sf;
 
+void drawCircle(sf::Image& image, int centerX, int centerY, int radius, sf::Color color) {
+	int x = radius - 1;
+	int y = 0;
+	int dx = 1;
+	int dy = 1;
+	int err = dx - (radius << 1);
+
+	while (x >= y) {
+		if (centerX + x >= 0 && centerX + x < image.getSize().x && centerY + y >= 0 && centerY + y < image.getSize().y)
+			image.setPixel(centerX + x, centerY + y, color);
+		if (centerX + y >= 0 && centerX + y < image.getSize().x && centerY + x >= 0 && centerY + x < image.getSize().y)
+			image.setPixel(centerX + y, centerY + x, color);
+		if (centerX - y >= 0 && centerX - y < image.getSize().x && centerY + x >= 0 && centerY + x < image.getSize().y)
+			image.setPixel(centerX - y, centerY + x, color);
+		if (centerX - x >= 0 && centerX - x < image.getSize().x && centerY + y >= 0 && centerY + y < image.getSize().y)
+			image.setPixel(centerX - x, centerY + y, color);
+		if (centerX - x >= 0 && centerX - x < image.getSize().x && centerY - y >= 0 && centerY - y < image.getSize().y)
+			image.setPixel(centerX - x, centerY - y, color);
+		if (centerX - y >= 0 && centerX - y < image.getSize().x && centerY - x >= 0 && centerY - x < image.getSize().y)
+			image.setPixel(centerX - y, centerY - x, color);
+		if (centerX + y >= 0 && centerX + y < image.getSize().x && centerY - x >= 0 && centerY - x < image.getSize().y)
+			image.setPixel(centerX + y, centerY - x, color);
+		if (centerX + x >= 0 && centerX + x < image.getSize().x && centerY - y >= 0 && centerY - y < image.getSize().y)
+			image.setPixel(centerX + x, centerY - y, color);
+
+		if (err <= 0) {
+			y++;
+			err += dy;
+			dy += 2;
+		}
+		if (err > 0) {
+			x--;
+			dx += 2;
+			err += dx - (radius << 1);
+		}
+	}
+}
+
+
 float clip(float n, float lower, float upper) {
 	return std::max(lower, std::min(n, upper));
 }
@@ -131,14 +170,7 @@ int main()
 				int x = static_cast<int>(caves[i].x);
 				int y = static_cast<int>(caves[i].y);
 
-				// Draw a circle (cave) at the cave position
-				for (int circleX = x - 5; circleX <= x + 5; circleX++) {
-					for (int circleY = y - 5; circleY <= y + 5; circleY++) {
-						if (circleX >= 0 && circleX < WIDTH && circleY >= 0 && circleY < HEIGHT) {
-							image.setPixel(circleX, circleY, sf::Color::White);
-						}
-					}
-				}
+				drawCircle(image, x, y, 10, sf::Color::White);
 			}
 		}
 
