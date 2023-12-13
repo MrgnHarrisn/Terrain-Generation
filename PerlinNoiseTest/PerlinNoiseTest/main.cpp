@@ -147,7 +147,7 @@ int main()
 	int WIDTH = 800, HEIGHT = 800;
 
 	RenderWindow window(VideoMode(WIDTH, HEIGHT), "Perlin Noise");
-	window.setFramerateLimit(2);
+	window.setFramerateLimit(1);
 
 	Image image;
 
@@ -155,43 +155,83 @@ int main()
 	Vector2f min = { 0.0, 0.0 }; 
 	Vector2f max = { (float)WIDTH, (float)HEIGHT };
 
+	image.create(WIDTH, HEIGHT, sf::Color::White);
+
+	auto caves = generate_caves(min, max);
+
+	std::vector<float> heights = generate_heights(WIDTH, 0.004);
+	for (int i = 0; i < WIDTH; i++) {
+		int dirt_height = static_cast<int>(heights[i]);
+
+		// Clip dirt_height to stay within the valid range of the image
+		dirt_height = std::max(0, std::min(dirt_height, HEIGHT - 6));
+		int dirt_range = random(3, 5);
+
+		// Set the dirt color pixel at (i, dirt_height)
+		for (int j = dirt_height; j <= dirt_height + dirt_range; j++)
+		{
+			image.setPixel(i, j, Color(150, 75, 0));
+		}
+
+		// Set other pixels above dirt_height
+		for (int j = 799; j > dirt_height + dirt_range; j--) {
+			image.setPixel(i, j, sf::Color(100, 100, 100));
+		}
+
+		for (int i = 0; i < caves.size(); i++) {
+			int x = static_cast<int>(caves[i].x);
+			int y = static_cast<int>(caves[i].y);
+
+			drawCircle(image, x, y, 10, sf::Color::White);
+		}
+	}
+
 	while (window.isOpen())
 	{
+		bool isRKeyPressed = false;
 		Event event;
 		while (window.pollEvent(event))
 		{
 			if (event.type == Event::Closed) window.close();
+			if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == sf::Keyboard::R) {
+					isRKeyPressed = true;
+				}
+			}
 		}
 
-		image.create(WIDTH, HEIGHT, sf::Color::White);
+		if (isRKeyPressed) {
+			image.create(WIDTH, HEIGHT, sf::Color::White);
 
-		auto caves = generate_caves(min, max);
+			caves = generate_caves(min, max);
 
-		std::vector<float> heights = generate_heights(WIDTH, 0.004);
-		for (int i = 0; i < WIDTH; i++) {
-			int dirt_height = static_cast<int>(heights[i]);
+			std::vector<float> heights = generate_heights(WIDTH, 0.004);
+			for (int i = 0; i < WIDTH; i++) {
+				int dirt_height = static_cast<int>(heights[i]);
 
-			// Clip dirt_height to stay within the valid range of the image
-			dirt_height = std::max(0, std::min(dirt_height, HEIGHT - 6));
-			int dirt_range = random(3, 5);
+				// Clip dirt_height to stay within the valid range of the image
+				dirt_height = std::max(0, std::min(dirt_height, HEIGHT - 6));
+				int dirt_range = random(3, 5);
 
-			// Set the dirt color pixel at (i, dirt_height)
-			for (int j = dirt_height; j <= dirt_height + dirt_range; j++)
-			{
-				image.setPixel(i, j, Color(150, 75, 0));
+				// Set the dirt color pixel at (i, dirt_height)
+				for (int j = dirt_height; j <= dirt_height + dirt_range; j++)
+				{
+					image.setPixel(i, j, Color(150, 75, 0));
+				}
+
+				// Set other pixels above dirt_height
+				for (int j = 799; j > dirt_height + dirt_range; j--) {
+					image.setPixel(i, j, sf::Color(100, 100, 100));
+				}
+
+				for (int i = 0; i < caves.size(); i++) {
+					int x = static_cast<int>(caves[i].x);
+					int y = static_cast<int>(caves[i].y);
+
+					drawCircle(image, x, y, 10, sf::Color::White);
+				}
 			}
-
-			// Set other pixels above dirt_height
-			for (int j = 799; j > dirt_height + dirt_range; j--) {
-				image.setPixel(i, j, sf::Color(100, 100, 100));
-			}
-
-			for (int i = 0; i < caves.size(); i++) {
-				int x = static_cast<int>(caves[i].x);
-				int y = static_cast<int>(caves[i].y);
-
-				drawCircle(image, x, y, 10, sf::Color::White);
-			}
+			isRKeyPressed = false;
 		}
 
 		sf::Texture texture;
